@@ -135,18 +135,18 @@ const findHeightOfBST = tree => {
   } 
 
   // RECURSIVE CASE
-  let counterLeft = 1;
-  let counterRight = 1;
+  let leftBranch = 0;
+  let rightBranch = 0;
+
+  if (tree.right !== null) {
+    rightBranch = 1 + findHeightOfBST(tree.right);
+  } 
   
-  if (tree.right !== null && tree.left !== null) {
-    counterLeft = counterLeft + findHeightOfBST(tree.left);
-    counterRight = counterRight + findHeightOfBST(tree.right);
-    return counterLeft > counterRight ? counterLeft : counterRight;
-  } else if (tree.left !== null) {
-    return counterLeft + findHeightOfBST(tree.left);
-  } else {
-    return counterRight + findHeightOfBST(tree.right);
+  if (tree.left !== null) {
+    leftBranch = 1 + findHeightOfBST(tree.left);
   }
+
+  return leftBranch > rightBranch ? leftBranch : rightBranch;
 };
 
 // IS IT A BINARY SEARCH TREE?
@@ -202,21 +202,17 @@ const findThirdLargestNode = tree => {
   
   if (largest.left !== null) {
     secondLargest = findLargestNode(largest.left);
-    if (secondLargest.left !== null) {
-      thirdLargest = findLargestNode(secondLargest.left);
-    } else if (secondLargest.parent !== largest) {
-      thirdLargest = secondLargest.parent;
-    } else {
-      thirdLargest = largest.parent;
-    }
+    thirdLargest = largest.parent;
   } else {
     secondLargest = largest.parent;
-    if (secondLargest.left !== null) {
-      thirdLargest = findLargestNode(secondLargest.left);
-    } else {
-      thirdLargest = secondLargest.parent;
-    }
   }
+
+  if (secondLargest.left !== null) {
+    thirdLargest = findLargestNode(secondLargest.left);
+  } else if (secondLargest.parent !== largest) {
+    thirdLargest = secondLargest.parent;
+  }
+
   return thirdLargest.key;
 };
 
@@ -233,8 +229,7 @@ const findLengthOfShortestBranch = tree => {
     const rightBranch = 1 + findLengthOfShortestBranch(tree.right);
     return leftBranch > rightBranch ? leftBranch : rightBranch;
   }
-
-}
+};
 
 const isTreeBalanced = tree => {
   const longestBranch = findHeightOfBST(tree);
@@ -244,20 +239,21 @@ const isTreeBalanced = tree => {
 
 const main = () => {
   const test = new BinarySearchTree();
+  test.insert(7);
   test.insert(3);
-  test.insert(1);
   test.insert(4);
   test.insert(6);
-  test.insert(9);
-  test.insert(12);
-  test.insert(17);
   test.insert(10);
-  // console.log(test);
-  // console.log(findHeightOfBST(test));
+  test.insert(30);
+  test.insert(31);
+  test.insert(19);
+  test.insert(21);
+  console.log(test.right);
+  console.log(findHeightOfBST(test));
   // console.log(isItBST(test));
   // console.log(isItBST(badTree));
   // console.log(findThirdLargestNode(test));
-  console.log(isTreeBalanced(test));
+  // console.log(isTreeBalanced(test));
 };
 
 main();

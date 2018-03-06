@@ -126,9 +126,9 @@ class BinarySearchTree {
   }
 }
 
-// FIND HEIGHT OF BST -- O(nlog(n))
+// FIND HEIGHT OF BST -- O(log(n))
 
-const findHeightBST = tree => {  
+const findHeightOfBST = tree => {  
   // BASE CASE
   if (tree.left === null && tree.right === null) {
     return 1;
@@ -139,19 +139,106 @@ const findHeightBST = tree => {
   let counterRight = 1;
   
   if (tree.right !== null && tree.left !== null) {
-    counterLeft = counterLeft + findHeightBST(tree.left);
-    counterRight = counterRight + findHeightBST(tree.right);
-    if (counterLeft > counterRight) {
-      return counterLeft;
-    } else {
-      return counterRight;
-    }
+    counterLeft = counterLeft + findHeightOfBST(tree.left);
+    counterRight = counterRight + findHeightOfBST(tree.right);
+    return counterLeft > counterRight ? counterLeft : counterRight;
   } else if (tree.left !== null) {
-    return counterLeft + findHeightBST(tree.left);
+    return counterLeft + findHeightOfBST(tree.left);
   } else {
-    return counterRight + findHeightBST(tree.right);
+    return counterRight + findHeightOfBST(tree.right);
   }
 };
+
+// IS IT A BINARY SEARCH TREE?
+
+const isItBST = (tree, min=null, max=null) => {
+  // BASE CASE
+
+  if (min !== null) {
+    if (tree.key < min) {
+      return false;
+    }
+  }
+
+  if (max !== null) {
+    if (tree.key > max) {
+      return false;
+    }
+  }
+
+  // RECURSIVE CASE
+  if (tree.right !== null) {
+    if (!isItBST(tree.right, tree.key, max)) {
+      return false;
+    }
+  }
+
+  if (tree.left !== null) {
+    if (!isItBST(tree.left, min, tree.key)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+// FIND THIRD LARGEST NODE
+const findLargestNode = tree => {
+  if (tree.right !== null) {
+    let node = tree.right;
+    while (node.right !== null) {
+      node = node.right;
+    }
+    return node;
+  } else {
+    return tree;
+  }
+};
+
+const findThirdLargestNode = tree => {
+  const largest = findLargestNode(tree);
+  let secondLargest;
+  let thirdLargest;
+  
+  if (largest.left !== null) {
+    secondLargest = findLargestNode(largest.left);
+    if (secondLargest.left !== null) {
+      thirdLargest = findLargestNode(secondLargest.left);
+    } else if (secondLargest.parent !== largest) {
+      thirdLargest = secondLargest.parent;
+    } else {
+      thirdLargest = largest.parent;
+    }
+  } else {
+    secondLargest = largest.parent;
+    if (secondLargest.left !== null) {
+      thirdLargest = findLargestNode(secondLargest.left);
+    } else {
+      thirdLargest = secondLargest.parent;
+    }
+  }
+  console.log(largest);
+  console.log(secondLargest);
+  return thirdLargest.key;
+};
+
+// const badTree = {
+//   key: 5,
+//   left: {
+//     key: 4,
+//     right: {
+//       key: 6,
+//       right: null,
+//       left: null
+//     },
+//     left: null
+//   },
+//   right: {
+//     key: 7,
+//     right: null,
+//     left: null
+//   }
+// };
 
 const main = () => {
   const test = new BinarySearchTree();
@@ -160,11 +247,14 @@ const main = () => {
   test.insert(4);
   test.insert(6);
   test.insert(9);
-  test.insert(2);
-  test.insert(5);
-  test.insert(7);
-  console.log(test);
-  console.log(findHeightBST(test));
+  test.insert(12);
+  test.insert(17);
+  test.insert(10);
+  // console.log(test);
+  // console.log(findHeightOfBST(test));
+  // console.log(isItBST(test));
+  // console.log(isItBST(badTree));
+  // console.log(findThirdLargestNode(test));
 };
 
 main();
